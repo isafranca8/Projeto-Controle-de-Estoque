@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste de página Funcionário</title>
+  <link rel="icon" href="logoo ofcc.png" type="imagem/x-icon">
+  <style>
+  body {
+    background-image:url("img/ofccfundo\ .png");
+    background-attachment: fixed;
+    background-size: 100%;
+    height: 1000px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+  h1 {
+    color: rgb(255, 255, 255);
+    text-align: center;
+    padding-top: 50px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+
+  .menu a {
+    margin-right: 50px;
+    text-decoration: none;
+    color: rgb(243, 228, 255);
+    font-weight: bold;
+    transition: color 0.3s;
+    font-size: 23px;
+  }
+  .menu a:hover {
+  color: rgb(110, 28, 25); 
+}
+
+.titulo {
+  text-align: center;
+  color: rgb(30, 56, 139);
+  margin: 20px 0;
+  padding-top: 130px;
+ }
+
+.minhalista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 100px;
+  margin-bottom: 100px;
+}
+.card {
+  background: rgb(69, 94, 175); 
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  transition: 0.5s;
+}
+.card img {
+  width: 100%;
+  display: block;
+  height: 340px;
+  object-fit: cover;
+}
+
+.card-content {
+  margin: 100px 0 80px;
+  padding: 10px;
+  text-align: center;
+}
+
+/* CORREÇÃO AQUI - Remover sublinhado de TODOS os links dentro do card */
+.card a {
+  text-decoration: none !important;
+}
+
+.card-content h2 {
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+  transition: color 0.1s; /* Transição suave para a cor */
+}
+
+/* CORREÇÃO AQUI - Seletor correto para quando o LINK é clicado */
+.card a:active h2 {
+  color: red !important;
+}
+
+.card:hover {
+  transform: translateY(-15px); 
+  box-shadow: 0 10px 20px rgba(1, 5, 61, 0.774); 
+}
+.play-icon {
+  font-size: 20px;
+  color: white;
+}
+
+header{
+  background: rgb(155, 178, 255); 
+  color: rgb(255, 255, 255);
+  font-size: 25px;
+  padding: 20px;
+  text-align: center;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  gap:15px;
+  width: 100%;             
+  box-sizing: border-box;   
+}
+
+header img{
+  width: 150px;
+  height: 150px;
+}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="Login.html">
+    <img src="logoo ofcc.png" alt="Logo de Livraria">
+    </a>
+    <div>
+        <h1>Estoque Pro</h1>
+        <p>Controle total, resultado real</p>
+    </div>
+  </header>
+
+  <h1 class="titulo">Sistema Principal do Funcionário</h1>
+  
+  <section class="minhalista">
+    <div class="card">
+      <a href="entradaesaidafunc.html">
+        <div class="card-content">
+            <h2>Registro de Entrada e Saída</h2>
+        </div>
+      </a>
+    </div>
+      
+
+    <div class="card">
+      <a href="relatorioestoquefun.html">
+        <div class="card-content">
+            <h2>Relatório do Estoque</h2>
+        </div>
+      </a>
+    </div>
+    
+  </section>
+</body>
+</html>

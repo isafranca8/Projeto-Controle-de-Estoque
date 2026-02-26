@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gerenciador de Estoque com Soma</title>
+  <link rel="icon" href="logoo ofcc.png" type="imagem/x-icon">
+
+ <style>
+    body {
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        background-image: url(img/ofccfundo\ .png);
+        padding: 0;
+        margin: 0;
+        justify-items: center;
+        background-size: 100%;
+        background-position: center;
+        max-height: 1500px;
+        background-attachment: fixed;
+    }
+
+    h1 {
+      color: rgb(30, 56, 139);
+      display: block;
+      font-size: 45px;
+      gap: 20px;
+    }
+
+    .card{
+      background-color: rgb(69, 94, 175); 
+      color: white;
+      width: 600px;
+      height: 350px;
+      padding: 15px;
+      border-radius: 20px;
+      font-size: 40px;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      background-color: #e5e0f1bb;
+      border: 1px solid #edeef2;
+    }
+
+    button {
+      background: rgb(155, 178, 255); 
+      color: rgb(255, 255, 255);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #120b77;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      color: #17034f;
+    }
+
+    li {
+      background:  rgba(233, 232, 232, 0.9);
+      padding: 8px;
+      border-radius: 5px;
+      margin-bottom: 6px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h3{
+        color: #fcf8fc42;
+        font-size: 30px;
+    }
+
+    p{
+        font-size: 30px;
+    }
+
+    header{
+        background: rgb(155, 178, 255); 
+        color: rgb(255, 255, 255);
+        font-size: 25px;
+        padding: 20px;
+        text-align: center;
+        display:flex;
+        align-items: center;
+        justify-content: center;
+        gap:15px;
+        height: 150px;
+        width: 100%;             
+        box-sizing: border-box;   
+    }
+
+    header img{
+        width: 140px;
+        height: 140px;
+    }
+
+    #mensagemSucesso{
+      padding: 20px;
+      color: rgb(255, 255, 255);
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      font-size: 25px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="Login.html">
+    <img src="logoo ofcc.png" alt="Logo de Livraria">
+  </a>
+    <div>
+        <h1>Estoque Pro</h1>
+        <p>Controle total, resultado real</p>
+    </div>
+</header>
+<br>
+<br>
+<h1>Cadastro de Produtos</h1>
+<br>
+<br>
+
+  <div class="card">
+
+  <input type="text" id="nome" placeholder="Nome do produto" />
+  <input type="text" id="descricao" placeholder="Descrição do Produto" />
+  <input type="number" id="quantidade" placeholder="Quantidade" />
+
+  <button id="btnAdicionar">Adicionar</button>
+
+  <a href="adm.html">
+   <button id="btnvoltar">Voltar</button>
+  </a>
+
+  <div id="mensagemSucesso" style="display: none;"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBZnA19yfl1X4oh0FaNH_hst7JwE19eHks",
+    authDomain: "bancodedadosprojeto-b4cec.firebaseapp.com",
+    databaseURL: "https://bancodedadosprojeto-b4cec-default-rtdb.firebaseio.com",
+    projectId: "bancodedadosprojeto-b4cec",
+    storageBucket: "bancodedadosprojeto-b4cec.firebasestorage.app",
+    messagingSenderId: "8244334978",
+    appId: "1:8244334978:web:728f9f5e74820992187f9b"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  const listaProdutos = document.getElementById("listaProdutos");
+  const mensagemSucesso = document.getElementById("mensagemSucesso");
+
+  function dataHoraBrasilia() {
+    const data = new Date();
+
+    const opcoes = {
+      timeZone: "America/Sao_Paulo",
+      hour12: false
+    };
+
+    const dataLocal = new Date(data.toLocaleString("en-US", opcoes));
+
+    const dia = String(dataLocal.getDate()).padStart(2, "0");
+    const mes = String(dataLocal.getMonth() + 1).padStart(2, "0");
+    const ano = dataLocal.getFullYear();
+
+    const hora = String(dataLocal.getHours()).padStart(2, "0");
+    const min = String(dataLocal.getMinutes()).padStart(2, "0");
+
+    return `${dia}/${mes}/${ano} ${hora}:${min}`;
+  }
+
+  document.getElementById("btnAdicionar").addEventListener("click", async () => {
+    const nome = document.getElementById("nome").value.trim();
+    const descricao = document.getElementById("descricao").value.trim();
+    const quantidade = Number(document.getElementById("quantidade").value.trim());
+
+    if (!nome || !descricao || !quantidade || quantidade <= 0) {
+      alert("Preencha corretamente todos os campos!");
+      return;
+    }
+
+    const produtosRef = database.ref("produtos");
+
+    produtosRef.once("value", (snapshot) => {
+      const dados = snapshot.val() || {};
+      let produtoExistente = null;
+      let produtoId = null;
+
+      for (const id in dados) {
+        if (dados[id].produto.toLowerCase() === nome.toLowerCase()) {
+          produtoExistente = dados[id];
+          produtoId = id;
+          break;
+        }
+      }
+
+      if (produtoExistente) {
+       
+        const novaQuantidade = produtoExistente.quantidade + quantidade;
+
+        database.ref("produtos/" + produtoId).update({
+          quantidade: novaQuantidade,
+          data: dataHoraBrasilia()  
+        });
+
+      } else {
+       
+        database.ref("produtos").push({
+          produto: nome,
+          descricao: descricao,
+          quantidade: quantidade,
+          data: dataHoraBrasilia()  // ✔ grava data/hora
+        });
+      }
+
+      // Limpar campos
+      document.getElementById("nome").value = "";
+      document.getElementById("descricao").value = "";
+      document.getElementById("quantidade").value = "";
+
+      
+      mensagemSucesso.style.display = "block";
+      mensagemSucesso.textContent = "Produto cadastrado com sucesso!";
+      setTimeout(() => {
+        mensagemSucesso.style.display = "none";
+      }, 3000); 
+    });
+  });
+
+
+</script>
+
+</body>
+</html>

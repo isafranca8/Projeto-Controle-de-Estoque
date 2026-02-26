@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrada e Saída de Produtos</title>
+  <link rel="icon" href="logoo ofcc.png" type="imagem/x-icon">
+  
+  <style>
+     body {
+    margin: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-image: url("img/ofccfundo\ .png");
+    padding: 0;
+    margin: 0;
+    justify-items: center;
+    background-size: 100%;
+    height: 1000px;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  header{
+    background: rgb(155, 178, 255); 
+    color: rgb(255, 255, 255);
+    font-size: 25px;
+    padding: 20px;
+    text-align: center;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    gap:15px;
+    height: 150px;
+    width: 100%;             
+    box-sizing: border-box;   
+    }
+
+    header img{
+      width: 140px;
+      height: 140px;
+    }
+
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.452);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ebd9d949;
+      text-align: center;
+    }
+    th {
+      background: rgb(155, 178, 255); 
+      color: rgb(255, 255, 255);
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    h1 {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      color: rgb(30, 56, 139);
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      font-size: 45px;
+      padding: 20px;
+    }
+
+    .btnVoltar{background-color: black;}
+    .button-voltar {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button {
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 2px;
+    }
+    .btnRemove { background-color: #b13527; }
+    .btnRemove:hover { background-color: #c0392b; }
+    .btnAdiciona { background-color: #2f688f; }
+    .btnAdiciona:hover { background-color: #2980b9; }
+    input[type="number"] {
+      width: 60px;
+      padding: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+    }
+     
+
+   ul {
+      list-style: none;
+      padding: 0;
+      color: #17034f;
+    }
+
+    li {
+      background:  rgba(233, 232, 232, 0.9);
+      padding: 8px;
+      border-radius: 5px;
+      margin-bottom: 6px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #btnVoltar{
+      background: rgb(155, 178, 255);
+      color: white;
+      font-size: 15px;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100px;
+      height: 40px;
+    }
+
+    #btnVoltar:hover {
+      background-color: #120b77;
+    }
+
+    
+  </style>
+</head>
+<body>
+  <header>
+    <a href="Login.html">
+    <img src="logoo ofcc.png" alt="Logo de Livraria">
+    </a>
+    <div class="h1">
+        <h1>Estoque Pro</h1>
+        <a>Controle total, resultado real</a>
+    </div>
+</header>
+  <h1 style="margin-top:120px"> Produtos Cadastrados</h1>
+
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nome do Produto</th>
+        <th>Quantidade</th>
+        <th>Alterar Quantidade</th>
+      </tr>
+    </thead>
+    <tbody id="tabela-produtos"></tbody>
+  </table>
+  <div class="button-voltar">
+    <a href="adm.html">
+      <button id="btnVoltar">Voltar</button>
+    </a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZnA19yfl1X4oh0FaNH_hst7JwE19eHks",
+      authDomain: "bancodedadosprojeto-b4cec.firebaseapp.com",
+      databaseURL: "https://bancodedadosprojeto-b4cec-default-rtdb.firebaseio.com",
+      projectId: "bancodedadosprojeto-b4cec",
+      storageBucket: "bancodedadosprojeto-b4cec.firebasestorage.app",
+      messagingSenderId: "8244334978",
+      appId: "1:8244334978:web:728f9f5e74820992187f9b"
+    };
+
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const tabela = document.getElementById("tabela-produtos");
+    const produtosRef = ref(db, "produtos");
+
+    
+    onValue(produtosRef, (snapshot) => {
+      tabela.innerHTML = "";
+
+      if (snapshot.exists()) {
+        const dados = snapshot.val();
+        console.log(" Dados do Firebase:", dados);
+
+        Object.entries(dados).forEach(([id, produto]) => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${produto.produto || "-"}</td>
+            <td id="quant-${id}">${produto.quantidade || 0}</td>
+            <td>
+              <input type="number" min="1" placeholder="Qtd" id="input-${id}">
+              <button data-id="${id}" class="btnRemove">Remover</button>
+              <button data-id="${id}" class="btnAdiciona">Adicionar</button>
+            </td>
+          `;
+
+          tabela.appendChild(tr);
+        });
+
+        
+        document.querySelectorAll(".btnRemove").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const id = btn.dataset.id;
+            const input = document.getElementById(`input-${id}`);
+            const qtdRemover = parseInt(input.value);
+            const qtdAtual = parseInt(document.getElementById(`quant-${id}`).textContent);
+
+            if (!qtdRemover || qtdRemover <= 0) {
+              alert("Digite uma quantidade válida!");
+              return;
+            }
+
+            const novaQtd = qtdAtual - qtdRemover;
+            if (novaQtd < 0) {
+              alert("A quantidade a remover é maior que o estoque!");
+              return;
+            }
+
+            const produtoRef = ref(db, `produtos/${id}`);
+            update(produtoRef, { quantidade: novaQtd });
+            alert("Quantidade removida com sucesso!");
+          });
+        });
+
+        
+        document.querySelectorAll(".btnAdiciona").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const id = btn.dataset.id;
+            const input = document.getElementById(`input-${id}`);
+            const qtdAdicionar = parseInt(input.value);
+            const qtdAtual = parseInt(document.getElementById(`quant-${id}`).textContent);
+
+            if (!qtdAdicionar || qtdAdicionar <= 0) {
+              alert("Digite uma quantidade válida!");
+              return;
+            }
+
+            const novaQtd = qtdAtual + qtdAdicionar;
+
+            const produtoRef = ref(db, `produtos/${id}`);
+            update(produtoRef, { quantidade: novaQtd });
+            alert("Quantidade adicionada com sucesso!");
+          });
+        });
+
+      } else {
+        tabela.innerHTML = `<tr><td colspan="4">Nenhum produto cadastrado.</td></tr>`;
+      }
+    });
+  </script>
+</body>
+</html>

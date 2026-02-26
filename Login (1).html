@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="login.css">
+  <link rel="icon" href="logoo ofcc.png" type="imagem/x-icon">
+</head>
+<body>
+  <div class="card"> 
+    <h1>Login</h1>
+    <form id="form">
+      <input type="email" id="email" placeholder="Email:" required>
+      <input type="password" id="senha" placeholder="Senha:" required>
+      <button type="submit">Entrar</button>
+    </form>
+
+    <p id="mensagem"></p>
+
+    <h2>Não Possui Cadastro?</h2>
+    <a href="Cadastro.html">Então Faça Seu Cadastro</a>
+  </div> 
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>  
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZnA19yfl1X4oh0FaNH_hst7JwE19eHks",
+      authDomain: "bancodedadosprojeto-b4cec.firebaseapp.com",
+      projectId: "bancodedadosprojeto-b4cec",
+      storageBucket: "bancodedadosprojeto-b4cec.firebasestorage.app",
+      messagingSenderId: "8244334978",
+      appId: "1:8244334978:web:728f9f5e74820992187f9b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    document.getElementById('form').addEventListener('submit', async function(e) {
+      e.preventDefault(); 
+
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+
+      try {
+        // Busca todos os usuários
+        const snapshot = await database.ref("usuarios").once("value");
+        let usuarioEncontrado = null;
+
+        snapshot.forEach((child) => {
+          const usuario = child.val();
+          if (usuario.email === email) {
+            usuarioEncontrado = usuario;
+          }
+        });
+
+        if (!usuarioEncontrado) {
+          document.getElementById("mensagem").innerText = "Email ou senha incorretos.";
+          return;
+        }
+
+        
+        localStorage.setItem("cargo", usuarioEncontrado.cargo);
+
+       
+        if (usuarioEncontrado.cargo === "administrador") {
+          window.location.href = "adm.html";
+        } else {
+          window.location.href = "pagfunc.html";
+        }
+
+      } catch (error) {
+        document.getElementById("mensagem").innerText = "Erro: " + error.message;
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

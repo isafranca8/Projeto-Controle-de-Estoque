@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="Cadastro.css">
+  <link rel="icon" href="logoo ofcc.png" type="imagem/x-icon">
+</head>
+
+<body>
+
+  <form id="cadastro-form" class="card-content">
+    <div class="h1">
+      <h1>Cadastrar Usuário</h1>
+    </div>
+
+    <input type="text" id="nome" placeholder="Nome" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="text" id="CPF" placeholder="CPF" required>
+    <input type="text" id="cargoInput" placeholder="Cargo" required>
+    <input type="text" id="NIF" placeholder="NIF" required>
+    <input type="password" id="senha" placeholder="Senha" required>
+
+    <select id="cargo">
+      <option value="funcionario">Funcionário</option>
+      <option value="administrador">Administrador</option>
+    </select>
+
+    <button type="submit">Cadastrar</button>
+    <a href="Login.html" class="btn-login">Login</a>
+  </form>
+
+  <p id="mensagem"></p>
+
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZnA19yfl1X4oh0FaNH_hst7JwE19eHks",
+      authDomain: "bancodedadosprojeto-b4cec.firebaseapp.com",
+      databaseURL: "https://bancodedadosprojeto-b4cec-default-rtdb.firebaseio.com",
+      projectId: "bancodedadosprojeto-b4cec",
+      storageBucket: "bancodedadosprojeto-b4cec.appspot.com",
+      messagingSenderId: "8244334978",
+      appId: "1:8244334978:web:728f9f5e74820992187f9b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    function dataHoraBrasilia() {
+      const data = new Date();
+      const opcoes = { timeZone: "America/Sao_Paulo", hour12: false };
+      const dataLocal = new Date(data.toLocaleString("en-US", opcoes));
+
+      const dia = String(dataLocal.getDate()).padStart(2, "0");
+      const mes = String(dataLocal.getMonth() + 1).padStart(2, "0");
+      const ano = dataLocal.getFullYear();
+      const hora = String(dataLocal.getHours()).padStart(2, "0");
+      const min = String(dataLocal.getMinutes()).padStart(2, "0");
+
+      return `${ano}-${mes}-${dia} ${hora}:${min}`;
+    }
+
+    document.getElementById("cadastro-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nome = document.getElementById("nome").value;
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      const cargo = document.getElementById("cargo").value;
+      const NIF = document.getElementById("NIF").value;
+      const CPF = document.getElementById("CPF").value;
+      const cargoInput = document.getElementById("cargoInput").value;
+
+      try {
+        const codigo = Math.floor(Math.random() * 10000);
+        const dataCadastro = dataHoraBrasilia();
+
+        await database.ref("usuarios").push({
+          nome, email, senha, cargo,
+          cargoInformado: cargoInput,
+          NIF, CPF, codigo, dataCadastro
+        });
+
+        document.getElementById("mensagem").innerText = "Usuário cadastrado com sucesso!";
+        e.target.reset();
+      } catch (error) {
+        document.getElementById("mensagem").innerText = "Erro: " + error.message;
+      }
+    });
+  </script>
+
+</body>
+</html>

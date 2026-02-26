@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Relatório do Estoque</title>
+<link rel="icon" href="logoo ofcc.png" type="imagem/x-icon">
+
+<style>
+    
+  body {
+    margin: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    background-image:url("img/ofccfundo\ .png");
+    padding: 0;
+    margin: 0;
+    justify-items: center;
+    background-size: 100%;
+    height: 1000px;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  header {
+    background: #4CAF50;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  .container {
+    width: 90%;
+    margin: 20px auto;
+  }
+
+ h1 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: rgb(30, 56, 139);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 45px;
+  padding: 20px;
+}
+
+   ul {
+      list-style: none;
+      padding: 0;
+      color: #17034f;
+    }
+
+    li {
+      background:  rgba(233, 232, 232, 0.9);
+      padding: 8px;
+      border-radius: 5px;
+      margin-bottom: 6px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header{
+    background: rgb(155, 178, 255); 
+    color: rgb(255, 255, 255);
+    font-size: 25px;
+    padding: 20px;
+    text-align: center;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    gap:15px;
+    height: 150px;
+    width: 100%;             
+    box-sizing: border-box;   
+    }
+
+    header img{
+      width: 140px;
+      height: 140px;
+    }
+
+  table {
+    width: 100%;
+    background: #e4dcdcf6;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  }
+
+  th {
+    background: rgb(155, 178, 255); 
+    color: rgb(255, 255, 255);
+    padding: 12px;
+  }
+
+  td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #bdbdbd11;
+  }
+
+  .status-ok { color: green; font-weight: bold; }
+  .status-baixo { color: rgb(204, 139, 18); font-weight: bold; }
+  .status-zerado { color: red; font-weight: bold; }
+
+  .produto-card {
+    background: #e4dcdc8c;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  select {
+    padding: 8px;
+    border-radius: 5px;
+  }
+  .btnVoltar{background-color: black;}
+    .button-voltar {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button {
+      color: black;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 2px;
+    }
+    #btnVoltar{
+      background: rgb(155, 178, 255); 
+      color: rgb(255, 255, 255);
+      font-size: 15px;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100px;
+      height: 40px;
+    }
+
+    #btnVoltar:hover {
+      background-color: #120b77;
+    }
+
+    #produto-select{
+      width: 250px;
+      padding: 15px 15px;
+      margin: 18px 0;
+      border: none;
+      border-radius: 15px;
+      background: #e4dcdc8c;
+      font-size: 15px;
+      outline: none;
+      transition: 0.3s;
+    }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="Login.html">
+    <img src="logoo ofcc.png" alt="Logo de Livraria">
+    </a>
+    <div class="h1">
+        <h1>Estoque Pro</h1>
+        <a>Controle total, resultado real</a>
+    </div>
+</header>
+
+<div class="container">
+
+
+  <h1> Relatório Geral</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Descrição</th>
+        <th>Quantidade</th>
+        <th>Data de Cadastro</th>
+        <th>Situação</th>
+      </tr>
+    </thead>
+    <tbody id="relatorio-geral"></tbody>
+  </table>
+
+  
+  <h1> Relatório Individual</h1>
+  <select id="produto-select">
+    <option value="">Selecione um produto...</option>
+  </select>
+
+  <div id="relatorio-individual" class="produto-card" style="display:none;">
+    <h3 id="titulo-produto"></h3>
+    <p><b>Descrição:</b> <span id="desc"></span></p>
+    <p><b>Quantidade atual:</b> <span id="quant"></span></p>
+    <p><b>Data de Cadastro:</b> <span id="mod"></span></p>
+  </div>
+  <div class="container">
+
+</div>
+<div class="button-voltar">
+    <a href="adm.html">
+      <button id="btnVoltar">Voltar</button>
+    </a>
+  </div>
+
+<script type="module">
+
+ 
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyBZnA19yfl1X4oh0FaNH_hst7JwE19eHks",
+    authDomain: "bancodedadosprojeto-b4cec.firebaseapp.com",
+    databaseURL: "https://bancodedadosprojeto-b4cec-default-rtdb.firebaseio.com",
+    projectId: "bancodedadosprojeto-b4cec",
+    storageBucket: "bancodedadosprojeto-b4cec.firebasestorage.app",
+    messagingSenderId: "8244334978",
+    appId: "1:8244334978:web:728f9f5e74820992187f9b"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const tabelaGeral = document.getElementById("relatorio-geral");
+  const select = document.getElementById("produto-select");
+  const card = document.getElementById("relatorio-individual");
+
+  const titulo = document.getElementById("titulo-produto");
+  const desc = document.getElementById("desc");
+  const quant = document.getElementById("quant");
+  const mod = document.getElementById("mod");
+
+
+  const produtosRef = ref(db, "produtos");
+
+ 
+  onValue(produtosRef, (snapshot) => {
+    tabelaGeral.innerHTML = "";
+    select.innerHTML = `<option value="">Selecione um produto...</option>`;
+
+    if (!snapshot.exists()) {
+      tabelaGeral.innerHTML = `<tr><td colspan="5">Nenhum produto encontrado</td></tr>`;
+      return;
+    }
+
+    const produtos = snapshot.val();
+
+    Object.entries(produtos).forEach(([id, item]) => {
+
+      const quantidade = parseInt(item.quantidade) || 0;
+      let situacao = "";
+      if (quantidade === 0) situacao = `<span class="status-zerado">Zerado</span>`;
+      else if (quantidade <= 5) situacao = `<span class="status-baixo">Baixo estoque</span>`;
+      else situacao = `<span class="status-ok">OK</span>`;
+
+      tabelaGeral.innerHTML += `
+        <tr>
+          <td>${item.produto}</td>
+          <td>${item.descricao}</td>
+          <td>${quantidade}</td>
+          <td>${item.data}</td>
+          <td>${situacao}</td>
+        </tr>
+      `;
+
+      select.innerHTML += `<option value="${id}">${item.produto}</option>`;
+    });
+  });
+
+
+  select.addEventListener("change", () => {
+    const id = select.value;
+
+    if (!id) {
+      card.style.display = "none";
+      return;
+    }
+
+    onValue(ref(db, "produtos/" + id), (snapshot) => {
+      if (!snapshot.exists()) return;
+
+      const item = snapshot.val();
+
+      
+      card.style.display = "block";
+
+      titulo.textContent = item.produto;
+      desc.textContent = item.descricao;
+      quant.textContent = item.quantidade;
+      mod.textContent = item.data || "—";
+    });
+    
+  });
+  
+
+</script>
+
+</body>
+</html>
